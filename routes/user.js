@@ -9,6 +9,9 @@ const userController = require('../controllers/user/index');
 //GET ALL
 router.get('/', verifyTokenAndAdmin, userController.getAllUser);
 
+//GET STATS
+router.get('/stats', verifyTokenAndAdmin, userController.getStats);
+
 //GET
 router.get('/:id', verifyTokenAndAdmin, userController.getUser);
 

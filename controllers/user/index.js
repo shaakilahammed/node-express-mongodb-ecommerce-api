@@ -21,7 +21,7 @@ exports.getUser = async (req, res) => {
     const { password, ...others } = user._doc;
     res.status(200).json(others);
   } catch (error) {
-    res.status(500).json(err);
+    res.status(500).json(error);
   }
 };
 
@@ -54,5 +54,31 @@ exports.deleteUser = async (req, res) => {
     res.status(200).json('User deleted');
   } catch (error) {
     res.status(500).json(err);
+  }
+};
+
+// GET
+exports.getStats = async (req, res) => {
+  const date = new Date();
+  const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+  try {
+    const data = await User.aggregate([
+      { $match: { createdAt: { $gte: lastYear } } },
+      {
+        $project: {
+          month: { $month: '$createdAt' },
+        },
+      },
+      {
+        $group: {
+          _id: '$month',
+          total: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json(error);
   }
 };
